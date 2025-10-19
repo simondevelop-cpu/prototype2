@@ -1,0 +1,253 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CategoryKind {
+  INCOME
+  EXPENSE
+  TRANSFER
+  OTHER
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+  OTHER
+}
+
+enum PeriodType {
+  WEEK
+  MONTH
+  QUARTER
+  YEAR
+}
+
+enum InsightType {
+  SUBSCRIPTION
+  BILL_HIKE
+  FEE_ALERT
+  PEER_COMPARISON
+  SAVINGS_PROGRESS
+  SUMMARY
+}
+
+enum InsightStatus {
+  ACTIVE
+  DISMISSED
+  ARCHIVED
+}
+
+enum InsightFeedbackValue {
+  USEFUL
+  NOT_RELEVANT
+  TOO_OBVIOUS
+  INACCURATE
+  OTHER
+}
+
+model User {
+  id              String      @id @default(cuid())
+  email           String      @unique
+  passwordHash    String?
+  name            String?
+  locale          String      @default("en-CA")
+  currency        String      @default("CAD")
+  province        String?
+  phone           String?
+  dob             DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  accounts        Account[]
+  labels          Label[]
+  budgets         Budget[]
+  goals           Goal[]
+  insights        Insight[]
+  sessions        Session[]
+  transactions    Transaction[]
+  smartRules      SmartRule[]
+}
+
+model Session {
+  token     String   @id
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+model Account {
+  id             String         @id @default(cuid())
+  user           User           @relation(fields: [userId], references: [id])
+  userId         String
+  name           String
+  institution    String
+  type           String
+  currency       String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  transactions   Transaction[]
+}
+
+model Merchant {
+  id           String        @id @default(cuid())
+  canonical    String
+  aliases      String[]
+  gateway      String?
+  parentBrand  String?
+  tags         String[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+}
+
+model Category {
+  id           Int            @id
+  name         String
+  displayName  String
+  kind         CategoryKind
+  parentId     Int?
+  parent       Category?      @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children     Category[]     @relation("CategoryToCategory")
+  transactions Transaction[]
+  budgets      BudgetCategory[]
+}
+
+model Label {
+  id            String             @id @default(cuid())
+  user          User               @relation(fields: [userId], references: [id])
+  userId        String
+  name          String
+  color         String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  assignments   TransactionLabel[]
+}
+
+model Transaction {
+  id                  String               @id @default(cuid())
+  user                User                 @relation(fields: [userId], references: [id])
+  userId              String
+  account             Account              @relation(fields: [accountId], references: [id])
+  accountId           String
+  merchant            Merchant?            @relation(fields: [merchantId], references: [id])
+  merchantId          String?
+  category            Category?            @relation(fields: [categoryId], references: [id])
+  categoryId          Int?
+  normalizedName      String
+  description         String
+  amount              Decimal              @db.Decimal(18, 2)
+  currency            String
+  transactionType     TransactionType
+  cashflowSign        Int
+  date                DateTime
+  isTransfer          Boolean              @default(false)
+  isRecurring         Boolean              @default(false)
+  recurrenceRule      String?
+  notes               String?
+  raw                 Json?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  labels              TransactionLabel[]
+  insightLinks        InsightTransaction[]
+}
+
+model TransactionLabel {
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  transactionId String
+  label       Label       @relation(fields: [labelId], references: [id])
+  labelId     String
+
+  @@id([transactionId, labelId])
+}
+
+model Budget {
+  id           String           @id @default(cuid())
+  user         User             @relation(fields: [userId], references: [id])
+  userId       String
+  period       PeriodType
+  startDate    DateTime
+  endDate      DateTime
+  totalTarget  Decimal?         @db.Decimal(18, 2)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  categories   BudgetCategory[]
+}
+
+model BudgetCategory {
+  id          String    @id @default(cuid())
+  budget      Budget    @relation(fields: [budgetId], references: [id])
+  budgetId    String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  target      Decimal   @db.Decimal(18, 2)
+  spent       Decimal   @db.Decimal(18, 2) @default(0)
+}
+
+model Goal {
+  id        String    @id @default(cuid())
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  name      String
+  target    Decimal   @db.Decimal(18, 2)
+  progress  Decimal   @db.Decimal(18, 2) @default(0)
+  priority  Int       @default(1)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Insight {
+  id          String             @id @default(cuid())
+  user        User               @relation(fields: [userId], references: [id])
+  userId      String
+  type        InsightType
+  title       String
+  body        String
+  data        Json?
+  status      InsightStatus      @default(ACTIVE)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  feedback    InsightFeedback[]
+  transactions InsightTransaction[]
+}
+
+model InsightTransaction {
+  insight     Insight     @relation(fields: [insightId], references: [id])
+  insightId   String
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  transactionId String
+
+  @@id([insightId, transactionId])
+}
+
+model InsightFeedback {
+  id        String               @id @default(cuid())
+  insight   Insight              @relation(fields: [insightId], references: [id])
+  insightId String
+  user      User                 @relation(fields: [userId], references: [id])
+  userId    String
+  value     InsightFeedbackValue
+  comment   String?
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+}
+
+model SmartRule {
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  merchant    Merchant? @relation(fields: [merchantId], references: [id])
+  merchantId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  Int?
+  amountMin   Decimal?  @db.Decimal(18, 2)
+  amountMax   Decimal?  @db.Decimal(18, 2)
+  appliesFrom DateTime  @default(now())
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+}
