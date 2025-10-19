@@ -1,0 +1,303 @@
+FEEL FREE TO UPDATE THIS README FILE, IT'S JUST THE INITIAL INSTRUCTIONS:
+
+I'm going to give you the PRD for my App, and I'd like you to build the entire thing cleanly with fully functioning backend / database set up for each user (as well as a demo user with dummy data completed, so new users can play around with it) - let me know if you have any questions before you begin. 
+
+Canadian Insights — Product Requirements Document (Updated for Strategy & Expectations)
+Last updated: Oct 19, 2025
+
+SECTION 1 — Strategy
+A. Positioning & Strategy (Differentiation)
+Thesis: Deliver fast, accurate, insights-first clarity on spending for Canadians — without noise or ads — using CSV uploads today and OAuth bank connections later. Host data in Canada and design categorization that truly understands e‑transfers and local merchants.
+Differentiators
+Insightful, not noisy: High-signal modules (subscriptions, bill hikes, fees, peer comparisons), measured by useful‑insight rate.
+Canada-first: E‑transfer parsing, Canadian merchant dictionary, local cohorts/benchmarks, data residency in Canada.
+Upload-first resilience: Bank-detail upload (CSV/PDF soon) that circumvents brittle linking; OAuth later.
+Privacy-forward: Clear consent, deletion, transparent provenance of rules/models; no ads, no reselling of PII.
+
+
+B. Value Proposition (Problems We Solve)
+Immediate needs (v0–v1):
+Subscription tracking and bill/fee change detection.
+Unwanted fees/fraud surfacing with actionable context.
+Peer comparisons that are tasteful and optional.
+Past‑spend visibility (self comparisons over time windows).
+Savings contribution visibility toward a small set of big goals (opt‑in, light‑touch).
+Budgeting is present but minimalist (table‑stakes).
+Maybes (evaluate behind flags / later):
+Groups / splitwise‑like sharing (labels first).
+Business expense tracking (sole‑prop mode).
+RRSP/TFSA pacing against CRA limits (if framed as insight vs. planning).
+Not now (explicitly out of scope):
+Historic net‑worth dashboards, retirement/house planning, daily transaction pings.
+Tax planning, investment strategy, net‑worth/credit tracking, CRA integrations.
+Education curriculum/community, payday countdown, geo‑nudges, social comparisons.
+
+C. Target Customers & Situations
+Personas: Students • Young professionals • Households.
+Mental model: Users think in flows (in/out) more than stocks (balances). Comfortable looking backwards in detail to extrapolate forward at a high level.
+Primary situations:
+Living paycheck‑to‑paycheck; high‑income but complex flows; living off savings.
+Multi‑account, inter‑account transfers; multi‑currency travelers.
+Secondary situations: Gig/variable income • Debt‑heavy • Couples/roommates • Expense reimbursements • Side‑business commingling • Parents • Retirees • Privacy‑max users.
+Design notes: Bias to low‑trust users (transparent, reversible), keep private‑by‑default, show evidence when confidence <80%.
+
+D. Monetization & Business Model
+Early stance: Likely no subscription at launch; validate. Blend of affiliate (switch marketplace) with freemium for advanced insights later.
+Potential revenue lines:
+Affiliate/switch: telco, energy, HISA, insurance; monetized views + completed actions.
+Freemium eventually: advanced market/tax/investment‑adjacent insights (later).
+Explicit no‑gos: Direct ads, payments/money movement, credit scoring, insurance sales, investments/market, tax filing/planning, CRA integrations.
+Distribution: SEO, community (Reddit/Discord), member‑get‑member, social proof. CPA target: < $40/acquisition. Consider importers for migration from Quicken/Mint/Hardbacon.
+Key open Q: Free vs. freemium line; when to introduce paid modules.
+
+E. Ways to Play (Choice Set - bold is our choices)
+Business model: Free → Affiliate vs Subscription vs Adjacent revenue. Choice now: Free → Affiliate.
+Build vs. buy: Targeted procurement (storage, auth) + in‑house parsing, categorization, insights.
+Frequency: Monthly/Quarterly return via high‑value insights; avoid daily nagging.
+Target segment: Canadian consumers first; CU/employer white‑label later.
+Platform: Web + React Native (iOS/Android); no desktop/offline initially.
+Data inputs: Manual upload now; OAuth later (Plaid/Flinks).
+Fidelity: Minimal budgeting + strong categorization & insights (not concierge or heavy planning).
+Simplicity: Fast, low‑workflows; few clicks to value; limited customization.
+Value prop: Visibility & insights over budgeting.
+Insight basis: Retrospective extrapolation > daily stream > forward‑assumption.
+Marketing: Show, don’t tell; guided set‑ups only when helpful.
+Tone: Professional & friendly (Wealthsimple/Mint‑like), not cheeky.
+Framing/noise: Minimalist with balanced reinforcement; avoid guilt/over‑celebration.
+Words to prefer: visibility, empowered, control, reclaim, simple, proactive, free.
+Top 3 “Ways to Play” options
+Retrospective insights‑first + switch marketplace (Chosen)
+Win with “useful in 60 seconds” modules (subs/bill hikes/fees/transfer cleanup). Monetize via affiliate/switch; free core. Manual now, OAuth later.
+Daily tracker from day 1 (Deprioritized)
+Requires OAuth now; higher build and retention risk; delays launch.
+Platform/API plays (Watchlist)
+Concierge‑first (RocketMoney‑like), CU/Employer white‑label, Insights API/SDK — potential B2B pivots after PMF.
+
+F. Naming (Prototype)
+Use “Canadian Insights” for prototype. Brand direction: professional/advisor‑like (closer to Monarch/Copilot). Avoid thrift/shame; emphasize control/ownership and feel‑good progress.
+
+SECTION 2 — Product (What We’re Offering)
+A. Dashboard (Information Architecture & Functionality)
+Tab 1: Cash flow & budget
+Charts
+Time‑series bar chart: income • expenses • other (default last 3 months).
+Horizontal bar: monthly spend by category (default last month).
+Always sort categories largest → smallest (non‑configurable v1).
+Cumulative values (not averages).
+Interactions
+Click time‑series month → filters category bars + transactions.
+Click a category bar → opens filtered transactions.
+Timeframe filter (Weekly/Monthly/Quarterly/Annual) syncs both charts and table.
+Label view: show Selected Label as its own category (reassign its amounts).
+Filters: Timeframe • Cashflow (All/Income/Expense/Other) • Accounts (cash/debt/credit) • Categories • Labels.
+Budget strip (optional)
+Buttons: Timeframe (weekly/monthly/etc.), Period (e.g., “Last month”).
+Auto‑set budget (from last 3 months) or user‑set; can budget monthly or per‑category; totals need not reach 100%, cap at 100% max.
+Top row KPIs: Monthly budget • Spent this month • Savings this month.
+Category progress bars sorted by largest target; hidden unless user expands.
+Savings strip (optional)
+KPIs: Saving last month • Saving since start; change period.
+Optional tiles to set up: Net worth (light), Goal contributions (up to 3, with name/target/priority). No detailed wealth time‑series v1.
+Intentional constraints
+High‑level first; allow empty states gracefully.
+No one‑off month budgets, no multiple budgets v1, no scenario planning.
+Insights not tied to savings pots (avoid diet‑app feel). No net‑worth time‑series v1.
+Locked demo screens until user uploads; “Get started” CTA to data wizard.
+
+Tab 2: Categorize Transactions
+Upload: up to 6 statements (CSV first; PDF later). Individual transaction add allowed.
+Personalize categories (screen)
+Rename categories → display as OLD CATEGORY (NEW NAME) to preserve mapping.
+Merge/unmerge categories; on unmerge we suggest placements.
+Maintain master hierarchy (50–100 bottom‑level) with 1:1 mapping; encourage Labels for personal semantics.
+List controls: Search (merchant/category/note/tag/amount), Sort (±amount, recency), Filter, Select all, Bulk recategorize. Columns: date • description • cashflow • account • category • amount • label. Hover: Split transaction.
+Recurring nuance: Allow flagging some purchases from a merchant as recurring, others as one‑off (e.g., Amazon contacts vs vacuum).
+Assumptions / Non‑features
+No “new transactions for review” feed; labels > per‑person filters.
+Not tracking one‑off vs recurring as distinct dimensions v1.
+Not gamifying cleaning streaks; internal metrics track quality.
+
+Tab 3: Insight Modules / Saving Opportunities
+Modules, not notifications list: Each need has its own workspace; we sacrifice global prioritization for accuracy within a need.
+Recurring expenses module (bills & subscriptions)
+CTA: Check bill categorization → confirm recurring detection, review candidates.
+Lists: insights with actions (learn/dismiss).
+Feedback UI (Option 1 preferred): Insightful • Not relevant • Too obvious • Inaccurate • Other[text] • Skip/hide.
+Fraud/unexpected: duplicate/amount spikes/uncommon merchants.
+Largest categories & merchants: variance and top movers; weekly‑summary‑like view.
+Comparisons: cohort toggles (Avg Canadian, by age; later: user cohort). Include a light “Comparison caveat” note.
+Feedback metrics: per‑module useful counts; “What should we add next?” button.
+Intentional constraints
+Measure perceived insightfulness, not savings or forced actions, at v0.
+No global notifications inbox; insights live within modules.
+
+Tab 4: Account Settings
+App settings: Language, default currency.
+Labels-as-category view: toggle per‑label.
+Recheck categorization: same flow as uploading; category‑by‑category review; “Needs review” tally surfaced.
+Smart rules registry: read‑only list of inferred rules.
+Personal info: name, email, phone (opt), province, DOB (or 18+ check).
+Feedback: top features (≤3), top fixes (≤3), desired features (≤3), comments, research‑chat consent.
+Support & privacy: FAQ, contact email, privacy statement.
+Privacy copy (starter)
+Bank‑level encryption; never store banking credentials; read‑only connections.
+End‑to‑end encryption in transit; encryption at rest.
+No third‑party data sharing; regular security audits.
+Hosted in Canada; compliant with Canadian privacy laws.
+
+B. Engagement Tactics
+Now:
+Encourage monthly re‑uploads by showing value quickly (catalog of personalized insights). Track useful‑insight signals and time‑in‑module.
+Future:
+Measure cleaning quality, learning moments, dollar savings (light‑weight attribution only after PMF).
+Habits: Make CSV re‑upload effortless and rewarding: import report, “what changed” highlights, 60‑second wins.
+
+C. Technology Requirements
+Support: Email‑based; AI‑drafted replies with human review.
+Infra: PIPEDA‑compliant storage in GCP Canada; encrypted at rest/in transit; scalable; optional real‑time DB & auth.
+UI: Full EN/FR support (externalized strings).
+Data control: Explicit user consent for inputs/sharing; easy deletion.
+Architecture: Modular; each module reads the unified transaction model (min fields: description, date, amount, account, category).
+Open tech questions: Additional security hardening beyond 2FA? Legacy migration paths (Mint/Hardbacon/Quicken importer)?
+
+SECTION 3 — Internal Tools
+A. Category Hierarchy
+Spending categories:
+Home
+Rent
+Pets
+Daycare
+Transport
+Car
+Bank and other fees
+Other bills
+Utilities (Home insurance)
+Utilities (Gas)
+Utilities (Car insurance)
+Utilities (Electric)
+Utilities (Water)
+Utilities (Utility)
+Utilities (Cell phones)
+Utilities (Internet)
+Groceries
+Eating Out
+Coffee
+Health
+Travel
+Shopping
+Clothes
+Beauty
+Education
+Work
+Subscriptions
+Family & Personal
+Sport & Hobbies
+Entertainment
+Gym membership
+Income categories:
+Salary
+Business
+Loan
+Gifts
+Extra income
+Other income
+Tax
+Implicit decisions:
+Maintain single canonical hierarchy for learning & aggregation.
+Encourage label use for personalization rather than custom categories.
+No splitting needs vs wants; users define via labels if desired.
+B. Bank of Insights (Rules & Candidates)
+Guardrails: Smart rules with audit; do not let AI “run free” externally. Maintain an internal suggestion feed from models for PM triage.
+Example rule families
+Bill hike: recurring merchant up >X% vs 3‑mo avg.
+Duplicate billing: same‑day dupes; within 30% amount dupes.
+Redundant subs: overlaps (music/storage/streaming/gaming).
+Peer benchmarks (Canada): category deltas vs cohort.
+Refund promised: debit tagged “return” but no matching credit in 14 days.
+Preauth not released: hold >$99 older than 7 days.
+Bank fees outlier: monthly bank fees >$5 (multi‑month) or single >$50.
+Insurance bundling: multiple providers suggests savings potential.
+Affiliate‑targeting surfaces (examples): low‑cost mobile (Fizz, Freedom, Public, Lucky, Chatr, EBOX/oxio), energy efficiency (Hilo/LogisVert), HISA (Tangerine/EQ/Simplii/KOHO/Neo/Brim), rate aggregators (Ratehub/LowestRates).
+C. Data Foundations
+Canonical merchant table: merchant_id, canonical_name, aliases, gateway, parent_brand, tags (subscription, fuel, marketplace).
+Generate aliases by descriptor clustering (char n‑gram TF‑IDF + MinHash).
+Maintain Canadian dictionary (grocers, telcos, transit, banks, fees).
+Always store raw descriptor and normalized; never discard raw.
+D. KPIs
+Tier‑0 (North stars)
+W1 Import Rate ≥60%
+Time to First Insight <60s
+Useful‑Insight Rate D1 ≥70%
+Accuracy (macro) ≥90%; Transfers F1 ≥95%, Fees ≥98%, Subs ≥90%, Bill‑hike precision ≥85%.
+Retention (uploaders): D7 ≥45%, D30 ≥30%.
+Support burden <0.5 tickets/100 users/week.
+Crash‑free sessions ≥99.5%.
+Tier‑1 (Core quality)
+Import success ≥85%; median import ≤90s.
+Auto‑categorize on first pass ≥80%.
+Needs‑review after week 2 ≤10%.
+Correction decay ≥40% from 1st → 3rd import.
+Re‑upload (30–45d) ≥40%.
+Duplicate rate ≈0% (alert >0.1%).
+≤10 actions to first chart/insight.
+Top‑3 nudge action rate >25%; dismiss <30%.
+Tier‑2 (Growth/Trust)
+Monthly returning users
+Partner CTR ≥5%; completion ≥2–5%.
+ARPU ≥$0.50 while testing.
+Privacy confidence ≥90% (view Trust → still upload).
+DSR (export/delete) 100% ≤30 days.
+p95 load ≤2.5s on key tabs.
+Minimal instrumentation: signup_started, file_upload_started/completed, insight_shown/liked/dismissed, tx_categorized_auto/edited, needs_review_shown/cleared, nudge_shown/clicked/dismissed, session_crash, screen_view, dsr_requested/completed.
+
+SECTION 4 — Journeys
+A. Sales / Landing
+Show, don’t tell: demo cards — Upload & smart categorization • Cash‑flow dashboard • Insights platform.
+CTAs: Get started / Import Mint data. Credibility via ratings/press and quotes about clarity and categorization.
+Differentiation: Canada‑made, e‑transfer aware, hosted in Canada, privacy‑first.
+B. Onboarding
+Micro‑slides while loading; “Made for Canadians, by Canadians.”
+Light profiling (optional) to tune insights (feelings, who you spend for, how you get paid, goals).
+Auth: social or email → verify → minimal personal data.
+First‑run choices: open to locked demo with “set it up with my data,” or prompt to use sample data after 2 minutes idle.
+C. Uploading Statements (Tab 2 entry)
+Accept CSV (v0) and plan PDF later; up to 6 files per batch.
+Progress: % complete with cleaning steps.
+Cleaning actions (auto with review option):
+Normalize descriptors; parse e‑transfer memos; map gateways (PAYPAL*/AMZN/SQ* → merchant).
+Detect refunds (±60d match), duplicates, transfers (±2d, amount/opposite sign, keywords, last‑4 card).
+Transfer review tray; exclude transfers from spend by default.
+D. Auto‑categorization
+Order of ops: fees/interest/ATM via phrases → recurring (26–32d ±10%; 7/14d) → merchant/category history → 3rd‑party hints → model scoring (Canada‑weighted keywords + n‑grams/embeddings + amount/weekday) → fallback to Other.
+Review prompts: Top 5 largest in “Other recurring”, Top 5 in “Other”, Top 5 merchants by spend; show tiny “Rule?” chip after 2nd identical correction.
+Be ruthless about uncertainty: max_prob < .8 or near‑ties → Needs review queue (Settings). Explain “why” chips.
+Provenance ledger: {source, confidence, features_hash, normalized_merchant, version}; surface to user when helpful.
+Rule safety: Scoped to normalized merchant; amount band optional; default future‑only; one‑time backfill on confirm; list rules in Settings.
+Multi‑currency: Store original currency/amount; roll‑ups convert with EOD rate; mark FX as estimated.
+Open questions: Do we allow users to author rules directly? What’s the minimal pleasant re‑upload loop? How accurate is “accurate enough” for v0?
+E. (Next) Budget Setup — light scaffolding
+Auto budget from last 3 months; per‑category caps; optional edits; no scenarios or multiple profiles v1.
+F. (Next) Savings Goals/Pots — light scaffolding
+Up to 3 goals with name/target/priority; no time‑series or pot breakdowns v1.
+G. Ongoing Feedback Collection
+Moments: Post‑import • Post‑categorization review • Exit or 14‑day inactivity • Monthly pulse (≤1 prompt/session, ≤2/mo).
+Surveys: Import correctness; Categorization accuracy (1–5 + what was off); Exit reasons; Pulse NPS‑like and “what to improve next?”
+Guardrails: Treat feedback as personal data (policy + deletion). Trigger only after meaningful events.
+
+SECTION 5 — Architecture & Data
+Frontend: Web (SPA) + React Native later; externalized i18n; accessible, performant components for charts/tables/toasts.
+API: Node/Express (or Fastify). TypeScript contracts; serverless‑ready.
+Data: Memory mode for demo; Postgres in Canada for production. Migrations via Prisma/Drizzle.
+Parsing: CSV v0; PDF bank statements later (keep Python FastAPI stub experimental).
+Env toggles: DISABLE_DB, DATABASE_URL, DATABASE_SSL.
+
+SECTION 6 — Milestones
+M1 — Foundations (now): Type‑safe API, CSV ingest + cleaning, categorization v0, demo locks, i18n scaffolding.
+M2 — Insights (now): Subscriptions/bill hikes/fees; feedback loop; import report.
+M3 — Benchmarks & Budget light (1 wk): Cohorts + tasteful comparisons; auto‑budget strip.
+M4 — Privacy/Trust (1 wk): Law 25 copy, deletion/export path, provenance surfacing.
+
+Appendix — Glossary
+Label: User‑defined tag that can optionally display as its own category in charts.
+Other (category): Fallback for low‑confidence classification pending review.
+Provenance: Trace metadata explaining how a category/insight was produced.
