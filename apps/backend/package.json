@@ -43,7 +43,7 @@
     "eslint-plugin-import": "2.29.1",
     "prettier": "3.2.5",
     "prisma": "5.15.0",
-    "supertest": "6.4.2",
+    "supertest": "6.3.3",
     "ts-node": "10.9.2",
     "tslib": "2.6.2",
     "tsup": "8.0.2",
