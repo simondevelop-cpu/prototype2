@@ -1,0 +1,12 @@
+node_modules
+.env
+.env.local
+apps/backend/.env
+apps/web/.env
+apps/backend/prisma/dev.db
+dist
+build
+coverage
+npm-debug.log*
+yarn-error.log*
+.DS_Store
